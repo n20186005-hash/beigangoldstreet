@@ -1,0 +1,6 @@
+export const events = [
+  { slug:"beigang-lantern-festival", title:"北港燈會", label:"節慶燈景", status:"已結束／下屆待公告", season:"通常在元宵前後，日期每年公告", description:"北港街區與河岸常在元宵前後以燈組、展演和夜間活動呈現不同風貌。不要用往年日期推算下一屆。", advice:["先確認展區與亮燈時間","晚間回程先看末班車","熱門週末把車停在外圍","拍攝時不跨越封鎖或展演動線"], source:"https://tour.yunlin.gov.tw/" },
+  { slug:"beigang-mazu-procession", title:"北港迎媽祖", label:"宗教民俗", status:"2026 活動已結束", season:"2026 年 5 月 5–9 日；下屆待公告", description:"北港迎媽祖包含遶境、陣頭、藝閣與民俗展演，是最能感受地方信仰能量、也最需要預先處理交通的時段。", advice:["2026 日期已過，不沿用為明年日期","活動核心區可能車輛只出不進","依當年公告使用停車與環鎮接駁","尊重儀式，不穿越神轎與隊伍"], source:"https://public.yunlin.gov.tw/News_Content.aspx?n=759&s=580695&sms=9349" },
+  { slug:"pilgrimage-season", title:"北港進香季與藝閣", label:"進香文化", status:"全年皆可能遇到進香團", season:"春季較密集，實際依各團與廟方", description:"進香不是只在單一活動日發生。大型團體抵達時，廟口、中山路與停車動線都會短暫改變。", advice:["看到隊伍先停下讓行","不從神轎、儀仗或供桌間穿越","推輪椅與嬰兒車避開核心尖峰","需要安靜參觀可改平日清晨"], source:"https://www.matsu.org.tw/" },
+  { slug:"traffic-control", title:"北港活動交通管制", label:"行前必看", status:"目前無本站可確認的常態管制", season:"每次大型活動另行公告", description:"交通管制必須看當年、當次公告。往年曾有市區範圍車輛只出不進、禁停與外圍接駁安排，不能直接套用到今天。", advice:["導航目的地設為公告停車場","截圖保存當次管制圖與日期","大型車依指定路線，不跟小客車走","離場高峰預留接駁與步行時間"], source:"https://public.yunlin.gov.tw/News_Content.aspx?n=759&s=536398" },
+];

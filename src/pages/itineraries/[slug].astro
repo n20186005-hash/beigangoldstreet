@@ -1,0 +1,14 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../../components/PageHero.astro";
+import ItineraryTimeline from "../../components/ItineraryTimeline.astro";
+import { itineraries } from "../../data/itineraries";
+export function getStaticPaths(){return itineraries.map(itinerary=>({params:{slug:itinerary.slug},props:{itinerary}}));}
+const { itinerary } = Astro.props;
+const schema={"@context":"https://schema.org","@type":"ItemList",name:itinerary.title,itemListElement:itinerary.stops.map((stop,index)=>({"@type":"ListItem",position:index+1,name:stop.title}))};
+---
+<BaseLayout title={`${itinerary.title}｜時間軸、廁所與雨天備案`} description={itinerary.description}>
+  <PageHero title={itinerary.title} eyebrow={itinerary.eyebrow} description={itinerary.description} tone="green" breadcrumbs={[{label:"首頁",href:"/"},{label:"行程",href:"/itineraries/"},{label:itinerary.shortTitle}]}/>
+  <section class="section"><div class="container route-layout"><article><ItineraryTimeline {itinerary}/><div class="notes"><h2>出發前再確認</h2><div><p><strong>停車</strong>活動日優先依外圍停車與接駁公告。</p><p><strong>營業</strong>最想去的店家放前半段，並查當日店休。</p><p><strong>體力</strong>時間軸是參考，不需要為了走完而勉強同行者。</p><p><strong>天氣</strong>下雨取消河岸，炎熱時縮短戶外連續步行。</p></div></div></article><aside><div class="aside-card"><h2>路線導航</h2><p>地圖按鈕只負責定位；巷弄、人潮與臨時管制仍依現場。</p><a class="button" href="/map/">打開旅遊地圖</a></div><div class="aside-card"><h2>需要調整？</h2><a href="/family/">親子建議 →</a><a href="/accessibility/">無障礙建議 →</a><a href="/rainy-day/">雨天路線 →</a></div></aside></div></section><script is:inline type="application/ld+json" set:html={JSON.stringify(schema)}/>
+</BaseLayout>
+<style>.route-layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;align-items:start;gap:4rem}.notes{margin-top:3rem;padding:1.5rem;border-radius:var(--radius-md);color:white;background:var(--ink)}.notes>div{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem}.notes p{color:rgba(255,255,255,.7);font-size:.8rem}.notes strong{display:block;color:var(--gold-light)}aside{position:sticky;top:7rem}.aside-card{padding:1.2rem;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface)}.aside-card+.aside-card{margin-top:1rem}.aside-card h2{margin-bottom:.7rem;font-family:var(--sans);font-size:.76rem;letter-spacing:.1em}.aside-card p,.aside-card a{display:block;color:var(--muted);font-size:.8rem}.aside-card>a:not(.button){padding:.35rem 0;color:var(--red);font-weight:800}.aside-card .button{width:100%;margin-top:.8rem;color:white}@media(max-width:800px){.route-layout{grid-template-columns:1fr}aside{position:static;display:grid;grid-template-columns:1fr 1fr;gap:1rem}.aside-card+.aside-card{margin-top:0}}@media(max-width:560px){.notes>div,aside{grid-template-columns:1fr}}</style>

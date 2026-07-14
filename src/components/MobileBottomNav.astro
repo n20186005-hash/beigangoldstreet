@@ -1,0 +1,24 @@
+---
+import Icon from "./Icon.astro";
+const items = [
+  { href: "/", label: "首頁", icon: "home" },
+  { href: "/map/", label: "地圖", icon: "map" },
+  { href: "/parking/", label: "停車", icon: "car" },
+  { href: "/food/", label: "美食", icon: "food" },
+  { href: "/itineraries/", label: "行程", icon: "route" },
+];
+const path = Astro.url.pathname;
+---
+<nav class="bottom-nav" aria-label="手機快速導覽">
+  {items.map((item) => <a class:list={{ active: path === item.href || (item.href !== "/" && path.startsWith(item.href)) }} href={item.href}><Icon name={item.icon} size={21}/><span>{item.label}</span></a>)}
+</nav>
+
+<style>
+  .bottom-nav { display: none; }
+  @media (max-width: 760px) {
+    .bottom-nav { position: fixed; right: .75rem; bottom: max(.75rem, env(safe-area-inset-bottom)); left: .75rem; z-index: 50; display: grid; grid-template-columns: repeat(5, 1fr); padding: .35rem; border: 1px solid rgba(255,255,255,.14); border-radius: 1.15rem; color: rgba(255,255,255,.7); background: rgba(47,41,36,.96); box-shadow: 0 12px 38px rgba(30,20,12,.3); backdrop-filter: blur(18px); }
+    a { display: flex; min-height: 50px; align-items: center; justify-content: center; flex-direction: column; gap: .05rem; border-radius: .8rem; font-size: .66rem; font-weight: 700; text-decoration: none; }
+    a:hover, a.active { color: white; background: rgba(255,255,255,.1); }
+    :global(body) { padding-bottom: 5rem; }
+  }
+</style>

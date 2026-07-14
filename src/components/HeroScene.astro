@@ -1,0 +1,49 @@
+<svg class="scene" viewBox="0 0 860 620" role="img" aria-labelledby="scene-title scene-desc">
+  <title id="scene-title">北港中山路通往朝天宮的街景插畫</title>
+  <desc id="scene-desc">暖色街屋、紅燈籠與遠方廟宇屋頂，呈現北港老街生活感。</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f5d9ab"/><stop offset="1" stop-color="#efd6b8"/></linearGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#b89e80"/><stop offset="1" stop-color="#6b584b"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-opacity=".16"/></filter>
+    <pattern id="brick" width="24" height="12" patternUnits="userSpaceOnUse"><path d="M0 0h24v12H0zM0 6h24M12 0v6M6 6v6" fill="none" stroke="#fff" stroke-opacity=".08"/></pattern>
+  </defs>
+  <rect width="860" height="620" rx="28" fill="url(#sky)"/>
+  <circle cx="678" cy="112" r="59" fill="#e5b650" opacity=".75"/>
+  <path d="M0 280 270 190v308L0 620z" fill="#9b5b43"/>
+  <path d="M860 276 590 190v308l270 122z" fill="#79574b"/>
+  <path d="M0 280 270 190v308L0 620zM860 276 590 190v308l270 122z" fill="url(#brick)"/>
+  <path d="m270 498 160-125 160 125 196 122H76z" fill="url(#road)"/>
+  <path d="m430 373-22 247h44z" fill="#d3b98f" opacity=".65"/>
+  <g filter="url(#shadow)">
+    <path d="M305 254h250l-49-48-35 19-41-80-41 80-35-19z" fill="#9f2f24" stroke="#543629" stroke-width="6" stroke-linejoin="round"/>
+    <path d="m343 205 25-35 24 24 38-79 38 79 24-24 25 35" fill="none" stroke="#d6a94b" stroke-width="8"/>
+    <path d="M334 257v147h192V257" fill="#d8b77b" stroke="#5c3f31" stroke-width="7"/>
+    <path d="M360 404V286h140v118" fill="#8f332b" stroke="#5c3f31" stroke-width="7"/>
+    <path d="M398 404V308h64v96" fill="#3f2b28" stroke="#d6a94b" stroke-width="5"/>
+    <circle cx="430" cy="352" r="13" fill="#d6a94b"/>
+  </g>
+  <g fill="#efe1cc" stroke="#4d382f" stroke-width="5">
+    <path d="M0 335h158v210L0 620z"/><path d="M702 330h158v290l-158-75z"/>
+    <path d="M58 270h170v243l-70 32V335H0z" fill="#d09a64"/><path d="M632 270h170v275l-100-32V330h158v-28z" fill="#b58d70"/>
+  </g>
+  <g fill="#45665b"><rect x="81" y="315" width="100" height="18"/><rect x="668" y="317" width="100" height="18"/></g>
+  <g fill="#342b27"><rect x="85" y="354" width="58" height="105"/><rect x="707" y="354" width="58" height="105"/></g>
+  <g stroke="#46322b" stroke-width="4">
+    <path d="M172 250v177M686 246v181"/><path d="M172 282h112M686 280H576"/>
+  </g>
+  <g class="lanterns">
+    <g transform="translate(207 290)"><path d="M0-15v15" stroke="#51342b" stroke-width="3"/><ellipse cy="21" rx="17" ry="23" fill="#c64735"/><path d="M-11 2h22M-12 40h24M0 44v10" stroke="#7e251e" stroke-width="3"/></g>
+    <g transform="translate(654 288)"><path d="M0-15v15" stroke="#51342b" stroke-width="3"/><ellipse cy="21" rx="17" ry="23" fill="#c64735"/><path d="M-11 2h22M-12 40h24M0 44v10" stroke="#7e251e" stroke-width="3"/></g>
+  </g>
+  <g fill="#2f2924">
+    <circle cx="338" cy="475" r="11"/><path d="M324 540q14-66 28 0z"/>
+    <circle cx="535" cy="505" r="9"/><path d="M524 555q11-52 22 0z"/>
+  </g>
+  <path d="M0 0h860v620H0z" fill="none" stroke="#fff" stroke-opacity=".26" stroke-width="3" rx="28"/>
+</svg>
+
+<style>
+  .scene { width: 100%; height: 100%; object-fit: cover; }
+  .lanterns { animation: sway 4s ease-in-out infinite alternate; transform-origin: center top; }
+  @keyframes sway { to { transform: rotate(.8deg); } }
+</style>

@@ -1,0 +1,12 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+import ToiletCard from "../components/ToiletCard.astro";
+import { toilets } from "../data/toilets";
+---
+<BaseLayout title="北港老街公廁指南｜位置、無障礙與尿布台" description="整理北港朝天宮與老街周邊公廁、園區廁所、無障礙與尿布台核實狀態，並說明入口與使用限制。">
+  <PageHero title="北港老街公廁" eyebrow="TOILET GUIDE" description="先找公共設施，再看無障礙與尿布台。沒有完成現場核實的項目，我們會直接標示不知道。" tone="green" breadcrumbs={[{label:"首頁",href:"/"},{label:"公廁"}]}/>
+  <section class="section"><div class="container"><div class="notice"><div><strong>到達後第一件事</strong><p>在停車區或遊客中心先確認最近廁所，不要等到進入活動人潮才找。</p></div><div><strong>無障礙與尿布台</strong><p>本站目前缺乏完整現場照片與尺寸核實，請以入口標示或服務人員說明為準。</p></div></div><div class="toilet-grid">{toilets.map((place,index)=><ToiletCard {place} {index}/>)}</div><div class="report"><div><span>資料還不夠完整</span><h2>拍入口，比拍十張景點照更有用</h2></div><p>若你發現位置變動、無障礙廁所或尿布台資訊錯誤，可從<a href="/corrections/">資料修正頁</a>提供現場日期與描述。</p></div></div></section>
+</BaseLayout>
+<style>.notice{display:grid;grid-template-columns:1fr 1fr;margin-bottom:2rem;border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;background:var(--surface)}.notice>div{padding:1.3rem}.notice>div+div{border-left:1px solid var(--border)}.notice strong{color:var(--red);font-family:var(--serif)}.notice p{margin-top:.35rem;color:var(--muted);font-size:.85rem}.toilet-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.report{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:3rem;margin-top:3rem;padding:2rem;border-radius:var(--radius-md);color:white;background:var(--green)}.report span{color:var(--gold-light);font-size:.72rem;font-weight:900}.report h2{margin-top:.4rem}.report p{color:rgba(255,255,255,.78)}.report a{color:white;font-weight:800}@media(max-width:720px){.notice,.toilet-grid,.report{grid-template-columns:1fr}.notice>div+div{border-top:1px solid var(--border);border-left:0}.report{gap:1rem}}
+</style>

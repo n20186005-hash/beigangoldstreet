@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+import MapExplorer from "../components/MapExplorer.astro";
+---
+<BaseLayout title="北港老街地圖｜景點、美食、停車場與公廁" description="可篩選北港老街景點、美食、停車、公廁、公車、伴手禮、拍照與休息點的互動導覽地圖。">
+  <PageHero title="北港旅遊地圖" eyebrow="INTERACTIVE MAP" description="先從推薦地點看懂北港的步行關係，再依需求切換景點、美食、停車與公廁，最後開啟外部導航前往。" tone="green" breadcrumbs={[{label:"首頁",href:"/"},{label:"地圖"}]}/>
+  <section class="map-section section">
+    <div class="container">
+      <MapExplorer/>
+
+      <section class="map-help" aria-labelledby="map-help-title">
+        <header class="map-help__intro">
+          <div><p>READ THE MAP</p><h2 id="map-help-title">看懂位置，再決定怎麼走</h2></div>
+          <span>示意圖處理方向，外部導航處理最後一段路。</span>
+        </header>
+        <div class="map-help__grid">
+          <article><span>01</span><div><h3>從朝天宮建立方向感</h3><p>中山路、工藝坊和遊客中心都在核心步行圈；水道頭與河岸適合放在行程後段。</p></div></article>
+          <article><span>02</span><div><h3>需要時才展開更多地點</h3><p>預設推薦八個實用地點。想找小吃、伴手禮或停車時，再切換上方分類即可。</p></div></article>
+          <article><span>03</span><div><h3>最後交給精確導航</h3><p>示意圖不代替道路導航；出發前也請再次確認店家時間、活動管制與現場入口。</p></div></article>
+        </div>
+      </section>
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  .map-section { background: linear-gradient(180deg, rgba(255,250,242,.72), var(--bg-paper)); }
+  .map-help { margin-top: clamp(4rem, 8vw, 7rem); padding-top: 2rem; border-top: 1px solid var(--border); }
+  .map-help__intro { display: flex; align-items: end; justify-content: space-between; gap: 2rem; }
+  .map-help__intro > div { display: grid; gap: .45rem; }
+  .map-help__intro p { color: var(--red); font-size: .67rem; font-weight: 900; letter-spacing: .18em; }
+  .map-help__intro h2 { font-size: clamp(1.55rem, 3vw, 2.2rem); }
+  .map-help__intro > span { max-width: 390px; color: var(--muted); font-size: .82rem; }
+  .map-help__grid { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 1.5rem; border: 1px solid var(--border); border-radius: 1.4rem; overflow: hidden; background: var(--surface); box-shadow: var(--shadow-sm); }
+  .map-help article { display: grid; min-height: 220px; grid-template-columns: auto 1fr; align-content: start; gap: 1rem; padding: 1.5rem; }
+  .map-help article + article { border-left: 1px solid var(--border); }
+  .map-help article > span { color: var(--gold); font-family: var(--serif); font-size: .78rem; font-weight: 900; }
+  .map-help h3 { font-size: 1rem; }
+  .map-help article p { margin-top: .65rem; color: var(--muted); font-size: .78rem; }
+
+  @media (max-width: 800px) {
+    .map-help__intro { align-items: start; flex-direction: column; gap: .75rem; }
+    .map-help__grid { grid-template-columns: 1fr; }
+    .map-help article { min-height: 0; }
+    .map-help article + article { border-top: 1px solid var(--border); border-left: 0; }
+  }
+</style>

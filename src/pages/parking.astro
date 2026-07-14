@@ -1,0 +1,13 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+import ParkingCard from "../components/ParkingCard.astro";
+import { parkingAreas } from "../data/parking";
+---
+<BaseLayout title="北港老街停車場攻略｜位置、費用與步行時間" description="北港朝天宮與老街停車區整理，包含車種、收費、步行時間、公廁、地面、遮陽、無障礙與活動管制提醒。">
+  <PageHero title="北港老街停車" eyebrow="PARKING GUIDE" description="先看可用性，再看距離。進香與大型活動時不要硬闖廟口，把車留在外圍通常更快。" tone="red" breadcrumbs={[{label:"首頁",href:"/"},{label:"停車"}]}/>
+  <section class="section"><div class="container parking-layout"><div><div class="answer"><strong>直接答案</strong><p>一般日期可先找北港第一停車場；大型活動依當年交通公告停外圍並轉乘接駁。本站不顯示推算空位，導航到場後仍以現場告示為準。</p></div><div class="sort-note"><span>排序方式</span><p>目前可用性 → 距朝天宮距離 → 車種與費用</p><a href="/events/traffic-control/">活動交通管制 ↗</a></div>{parkingAreas.map((area,index)=><ParkingCard {area} {index}/>)}</div><aside><div class="aside-card"><h2>進香旺季怎麼停？</h2><ol><li>出發前看當年公告</li><li>設定外圍停車區</li><li>依現場分流進場</li><li>記下停車入口與區域</li><li>預留回程接駁時間</li></ol></div><div class="aside-card alert"><h2>不要這樣做</h2><p>不要把車開到朝天宮門口才找位，也不要把高灘地舊公告當作今天一定可停。</p></div><div class="aside-card"><h2>機車與遊覽車</h2><p>活動期間常有專用分流。大型車請依主辦單位與警方指定路線，不以一般汽車導航代替。</p></div></aside></div></section>
+</BaseLayout>
+<style>
+  .parking-layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;align-items:start;gap:3rem}.answer{padding:1.3rem 1.5rem;border-left:4px solid var(--red);border-radius:0 var(--radius-md) var(--radius-md) 0;background:var(--surface);box-shadow:var(--shadow-sm)}.answer strong{color:var(--red);font-size:.76rem;letter-spacing:.12em}.answer p{margin-top:.4rem}.sort-note{display:flex;align-items:center;flex-wrap:wrap;gap:.7rem;margin:1.5rem 0;color:var(--muted);font-size:.78rem}.sort-note span{padding:.2rem .55rem;border-radius:999px;color:white;background:var(--green);font-weight:800}.sort-note a{margin-left:auto;color:var(--red);font-weight:800}aside{position:sticky;top:7rem}.aside-card{padding:1.2rem;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface)}.aside-card+.aside-card{margin-top:1rem}.aside-card h2{margin-bottom:.7rem;font-family:var(--sans);font-size:.78rem;letter-spacing:.1em}.aside-card li,.aside-card p{color:var(--muted);font-size:.8rem}.aside-card ol{padding-left:1.2rem}.alert{border-color:#e7b6ad;background:#fff1ed}@media(max-width:900px){.parking-layout{grid-template-columns:1fr}aside{position:static;display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}.aside-card+.aside-card{margin-top:0}}@media(max-width:650px){aside{grid-template-columns:1fr}.sort-note{align-items:flex-start;flex-direction:column}.sort-note a{margin-left:0}}
+</style>

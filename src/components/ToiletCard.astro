@@ -1,0 +1,12 @@
+---
+import StatusBadge from "./StatusBadge.astro";
+const { place, index } = Astro.props;
+const labels: Record<string,string> = { confirmed: "已核實", partial: "部分資訊", unknown: "尚待確認" };
+const statuses: Record<string,string> = { confirmed: "open", partial: "notice", unknown: "unknown" };
+const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.mapQuery)}`;
+---
+<article class="toilet-card"><header><span>{String(index + 1).padStart(2,"0")}</span><div><small>{place.type}</small><h2>{place.name}</h2></div><StatusBadge status={statuses[place.status]} label={labels[place.status]}/></header><p>{place.note}</p><dl><div><dt>開放時間</dt><dd>{place.hours}</dd></div><div><dt>無障礙</dt><dd>{place.accessible}</dd></div><div><dt>尿布台</dt><dd>{place.changing}</dd></div><div><dt>消費</dt><dd>{place.purchase}</dd></div><div><dt>距離</dt><dd>{place.walk}</dd></div><div><dt>入口</dt><dd>{place.entrance}</dd></div></dl><a class="link-arrow" href={mapUrl} target="_blank" rel="noopener">在地圖中查看</a></article>
+<style>
+  .toilet-card { padding: 1.4rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); }.toilet-card header { display: grid; grid-template-columns: 2.4rem 1fr auto; align-items: start; gap: .8rem; }.toilet-card header > span { color: var(--gold); font-family: var(--serif); }.toilet-card small { color: var(--red); font-size: .67rem; font-weight: 900; }.toilet-card h2 { margin-top: .25rem; font-size: 1.25rem; }.toilet-card > p { min-height: 52px; margin: 1rem 0; color: var(--muted); font-size: .82rem; }.toilet-card dl { border-top: 1px solid var(--border); }.toilet-card dl div { display: grid; grid-template-columns: 5.2rem 1fr; padding: .45rem 0; border-bottom: 1px dashed var(--border); font-size: .75rem; }.toilet-card dt { color: var(--muted); }.toilet-card dd { margin: 0; font-weight: 700; }.toilet-card .link-arrow { margin-top: 1rem; font-size: .78rem; }
+  @media(max-width:520px){.toilet-card header{grid-template-columns:2rem 1fr}.toilet-card header :global(.badge){grid-column:2}.toilet-card>p{min-height:0}}
+</style>

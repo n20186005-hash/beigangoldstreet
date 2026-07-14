@@ -1,0 +1,40 @@
+---
+import SiteLogo from "./SiteLogo.astro";
+import { navItems } from "../data/site";
+const path = Astro.url.pathname;
+---
+<div class="notice-bar">
+  <div class="container"><span>旅遊提醒</span><p>大型活動期間可能實施交通管制，出發前請查看最新活動資訊。</p><a href="/events/">查看活動</a></div>
+</div>
+<header class="site-header">
+  <div class="container header-inner">
+    <SiteLogo />
+    <nav aria-label="主要導覽">
+      <ul>
+        {navItems.map((item) => <li><a class:list={{ active: path === item.href || (item.href !== "/" && path.startsWith(item.href)) }} href={item.href}>{item.label}</a></li>)}
+      </ul>
+    </nav>
+    <a class="map-link" href="/map/">開啟地圖 <span aria-hidden="true">↗</span></a>
+  </div>
+</header>
+
+<style>
+  .notice-bar { color: #fff8eb; background: var(--red); font-size: .82rem; }
+  .notice-bar .container { display: flex; min-height: 38px; align-items: center; justify-content: center; gap: .7rem; }
+  .notice-bar span { padding: .05rem .45rem; border: 1px solid rgba(255,255,255,.45); border-radius: 999px; font-size: .7rem; font-weight: 800; letter-spacing: .1em; }
+  .notice-bar a { color: white; font-weight: 800; }
+  .site-header { position: sticky; top: 0; z-index: 30; border-bottom: 1px solid rgba(122,75,56,.14); background: rgba(247,240,227,.92); backdrop-filter: blur(14px); }
+  .header-inner { display: flex; min-height: 78px; align-items: center; justify-content: space-between; gap: 1.2rem; }
+  nav ul { display: flex; align-items: center; gap: clamp(.6rem, 1.4vw, 1.35rem); list-style: none; }
+  nav a { position: relative; padding-block: 1.5rem; font-size: .9rem; font-weight: 700; text-decoration: none; }
+  nav a::after { position: absolute; right: 0; bottom: 1rem; left: 0; height: 2px; background: var(--red); content: ""; transform: scaleX(0); transition: transform .2s; }
+  nav a:hover::after, nav a.active::after { transform: scaleX(1); }
+  .map-link { display: inline-flex; min-height: 42px; align-items: center; gap: .35rem; padding: .35rem .8rem; border: 1px solid var(--border); border-radius: 999px; font-size: .82rem; font-weight: 800; text-decoration: none; white-space: nowrap; }
+  @media (max-width: 1000px) { nav { display: none; } }
+  @media (max-width: 560px) {
+    .notice-bar .container { justify-content: flex-start; overflow: hidden; white-space: nowrap; }
+    .notice-bar p { overflow: hidden; text-overflow: ellipsis; }
+    .notice-bar span, .map-link { display: none; }
+    .header-inner { min-height: 68px; }
+  }
+</style>

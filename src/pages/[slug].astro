@@ -1,0 +1,23 @@
+---
+import GuideLayout from "../layouts/GuideLayout.astro";
+import { guidePages } from "../data/guidePages";
+export function getStaticPaths(){return guidePages.map(page=>({params:{slug:page.slug},props:{page}}));}
+const { page }=Astro.props;
+const faqSchema = page.slug === "faq" ? {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: page.sections.map((section) => ({
+    "@type": "Question",
+    name: section.title,
+    acceptedAnswer: { "@type": "Answer", text: section.paragraphs?.join(" ") ?? "" },
+  })),
+} : null;
+---
+<GuideLayout title={page.title} eyebrow={page.eyebrow} description={page.description} tone={page.tone} breadcrumbs={[{label:"首頁",href:"/"},{label:page.title}]}>
+  {page.answer && <p class="answer">{page.answer}</p>}
+  {page.sections.map(section => <section><h2>{section.title}</h2>{section.paragraphs?.map(text=><p>{text}</p>)}{section.items && <ul>{section.items.map(item=><li>{item}</li>)}</ul>}{section.links && <div class="section-links">{section.links.map(link=><a href={link.href} target={link.href.startsWith("http")?"_blank":undefined} rel={link.href.startsWith("http")?"noopener":undefined}>{link.label} →</a>)}</div>}</section>)}
+  <div slot="aside" class="aside-card"><h2>資料聲明</h2><p>營業、交通與活動可能臨時調整，以現場和主辦單位公告為準。</p></div>
+  <div slot="aside" class="aside-card"><h2>快速入口</h2><p><a href="/parking/">停車</a>・<a href="/toilets/">公廁</a><br/><a href="/map/">地圖</a>・<a href="/itineraries/">行程</a></p></div>
+</GuideLayout>
+{faqSchema && <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
+<style>.section-links{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem}.section-links a{padding:.45rem .75rem;border:1px solid var(--border);border-radius:999px;color:var(--red);background:var(--surface);font-size:.78rem;font-weight:800;text-decoration:none}</style>

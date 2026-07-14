@@ -1,0 +1,13 @@
+{
+  "name": "北港老街指南",
+  "short_name": "北港老街",
+  "description": "停車、美食、交通、廁所與一日遊",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f0e3",
+  "theme_color": "#9f2f24",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

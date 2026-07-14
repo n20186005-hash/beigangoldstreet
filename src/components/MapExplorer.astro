@@ -1,0 +1,581 @@
+---
+import GuideMap from "./GuideMap.astro";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
+interface Place {
+  id: string;
+  name: string;
+  category: string;
+  label: string;
+  status: string;
+  walk: string;
+  url: string;
+  mapQuery: string;
+  x: number;
+  y: number;
+}
+
+const places = JSON.parse(
+  readFileSync(resolve(process.cwd(), "public/data/map-places.json"), "utf8"),
+) as Place[];
+
+const recommendedIds = new Set(["chaotian", "old-street", "craft", "visitor", "parking-one", "toilet-temple", "bus-station", "daughter-bridge"]);
+const nonPointIds = new Set(["bus-chiayi", "bus-yunlin", "sesame"]);
+const filters = [
+  { id: "recommended", label: "推薦", caption: "第一次來" },
+  { id: "sights", label: "景點", caption: "廟宇與街區" },
+  { id: "taste", label: "吃喝・伴手禮", caption: "老街風味" },
+  { id: "arrival", label: "交通・停車", caption: "抵達北港" },
+  { id: "service", label: "公廁・休息", caption: "實用設施" },
+  { id: "all", label: "全部地點", caption: "完整查看" },
+];
+const isMappable = (place: Place) => !nonPointIds.has(place.id);
+const matchesFilter = (place: Place, filter: string) => {
+  if (!isMappable(place)) return false;
+  if (filter === "recommended") return recommendedIds.has(place.id);
+  if (filter === "sights") return ["attraction", "photo"].includes(place.category);
+  if (filter === "taste") return ["food", "souvenir"].includes(place.category);
+  if (filter === "arrival") return place.category === "parking" || place.id === "bus-station";
+  if (filter === "service") return ["toilet", "rest"].includes(place.category);
+  return true;
+};
+const getPlaces = (filter: string) => places.filter((place) => matchesFilter(place, filter));
+const initialPlaces = getPlaces("recommended");
+const markerSymbols: Record<string, string> = { attraction: "景", photo: "拍", food: "食", souvenir: "禮", parking: "P", toilet: "廁", transport: "車", rest: "休" };
+const directionsUrl = (place: Place) => `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place.mapQuery)}`;
+---
+<section class="explorer" data-map-explorer>
+  <header class="explorer-intro">
+    <div>
+      <p class="explorer-kicker">WALKABLE BEIGANG</p>
+      <h2>先選你現在需要的資訊</h2>
+    </div>
+    <p>預設只顯示第一次到北港最需要的地點，避免把所有標記一次塞進地圖。</p>
+  </header>
+
+  <div class="explorer-controls">
+    <div class="filters" role="group" aria-label="地圖分類篩選">
+      {filters.map((filter, index) => (
+        <button type="button" data-filter={filter.id} aria-pressed={index === 0 ? "true" : "false"}>
+          <span>{filter.label}</span>
+          <small>{filter.caption}・{getPlaces(filter.id).length}</small>
+        </button>
+      ))}
+    </div>
+    <div class="view-switch" role="group" aria-label="地圖顯示方式">
+      <button type="button" data-view-button="map" aria-pressed="true">看地圖</button>
+      <button type="button" data-view-button="list" aria-pressed="false">地點列表</button>
+    </div>
+  </div>
+
+  <div class="map-shell" data-view="map">
+    <div class="map-stage">
+      <div class="map-stage__head">
+        <div><small>WALKING MAP</small><strong>以朝天宮為步行中心</strong></div>
+        <span>點擊標記查看地點</span>
+      </div>
+      <div class="map-canvas">
+        <GuideMap interactive/>
+        <div class="marker-layer">
+          {initialPlaces.map((place) => (
+            <button
+              type="button"
+              class:list={["marker", `marker--${place.category}`]}
+              style={`--marker-x:${place.x}%;--marker-y:${place.y}%`}
+              data-place-marker={place.id}
+              aria-label={`查看${place.name}`}
+              title={place.name}
+            >{markerSymbols[place.category] ?? "•"}</button>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <aside class="places-panel" aria-label="地點列表">
+      <div class="panel-head">
+        <div><small>SELECTED PLACES</small><strong><span data-count aria-live="polite">{initialPlaces.length}</span> 個<span data-panel-label>推薦</span>地點</strong></div>
+        <div class="panel-head__meta"><span>可上下捲動 ↓</span></div>
+      </div>
+      <div class="places-list" data-places-list role="list">
+        {initialPlaces.map((place) => (
+          <article class="place-card" data-place-card={place.id} role="listitem">
+            <span class:list={["place-symbol", `place-symbol--${place.category}`]}>{markerSymbols[place.category] ?? "•"}</span>
+            <div class="place-card__body">
+              <div class="place-card__meta"><span>{place.label}</span><small>從朝天宮・{place.walk}</small></div>
+              <strong>{place.name}</strong>
+              <p>{place.status}</p>
+              <div class="place-card__actions">
+                <a href={place.url}>查看詳情</a>
+                <a href={directionsUrl(place)} target="_blank" rel="noopener">Google 導航 ↗</a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </aside>
+  </div>
+
+  <div class="map-footnote">
+    <span>北 ↑</span>
+    <p>步行關係示意，非精確比例；實際路線請開啟 Google 導航並依現場標示前進。</p>
+    <a href="/transport/">查看高鐵轉乘與公車路線 →</a>
+  </div>
+
+  <script is:inline type="application/json" data-map-data set:html={JSON.stringify(places)}></script>
+</section>
+<script>
+  interface Place {
+    id: string; name: string; category: string; label: string; status: string; walk: string;
+    url: string; mapQuery: string; x: number; y: number;
+  }
+
+  const root = document.querySelector<HTMLElement>("[data-map-explorer]");
+  if (root) {
+    const data = root.querySelector<HTMLScriptElement>("[data-map-data]");
+    const list = root.querySelector<HTMLElement>("[data-places-list]");
+    const layer = root.querySelector<HTMLElement>(".marker-layer");
+    const count = root.querySelector<HTMLElement>("[data-count]");
+    const panelLabel = root.querySelector<HTMLElement>("[data-panel-label]");
+    const shell = root.querySelector<HTMLElement>(".map-shell");
+    const places = JSON.parse(data?.textContent ?? "[]") as Place[];
+    const recommended = new Set(["chaotian", "old-street", "craft", "visitor", "parking-one", "toilet-temple", "bus-station", "daughter-bridge"]);
+    const nonPoints = new Set(["bus-chiayi", "bus-yunlin", "sesame"]);
+    const symbols: Record<string, string> = { attraction: "景", photo: "拍", food: "食", souvenir: "禮", parking: "P", toilet: "廁", transport: "車", rest: "休" };
+    const labels: Record<string, string> = { recommended: "推薦", sights: "景點", taste: "風味", arrival: "交通", service: "設施", all: "全部" };
+    let active = "recommended";
+
+    const isVisible = (place: Place) => {
+      if (nonPoints.has(place.id)) return false;
+      if (active === "recommended") return recommended.has(place.id);
+      if (active === "sights") return ["attraction", "photo"].includes(place.category);
+      if (active === "taste") return ["food", "souvenir"].includes(place.category);
+      if (active === "arrival") return place.category === "parking" || place.id === "bus-station";
+      if (active === "service") return ["toilet", "rest"].includes(place.category);
+      return true;
+    };
+
+    const selectPlace = (id: string) => {
+      root.querySelectorAll("[data-place-marker], [data-place-card]").forEach((item) => item.classList.toggle("is-active", item.getAttribute("data-place-marker") === id || item.getAttribute("data-place-card") === id));
+    };
+
+    const createMarker = (place: Place) => {
+      const marker = document.createElement("button");
+      marker.type = "button";
+      marker.className = `marker marker--${place.category}`;
+      marker.style.setProperty("--marker-x", `${place.x}%`);
+      marker.style.setProperty("--marker-y", `${place.y}%`);
+      marker.dataset.placeMarker = place.id;
+      marker.setAttribute("aria-label", `查看${place.name}`);
+      marker.title = place.name;
+      marker.textContent = symbols[place.category] ?? "•";
+      return marker;
+    };
+
+    const createCard = (place: Place) => {
+      const article = document.createElement("article");
+      article.className = "place-card";
+      article.dataset.placeCard = place.id;
+      article.setAttribute("role", "listitem");
+
+      const symbol = document.createElement("span");
+      symbol.className = `place-symbol place-symbol--${place.category}`;
+      symbol.textContent = symbols[place.category] ?? "•";
+
+      const body = document.createElement("div");
+      body.className = "place-card__body";
+      const meta = document.createElement("div");
+      meta.className = "place-card__meta";
+      const category = document.createElement("span");
+      category.textContent = place.label;
+      const walk = document.createElement("small");
+      walk.textContent = `從朝天宮・${place.walk}`;
+      meta.append(category, walk);
+
+      const title = document.createElement("strong");
+      title.textContent = place.name;
+      const status = document.createElement("p");
+      status.textContent = place.status;
+
+      const actions = document.createElement("div");
+      actions.className = "place-card__actions";
+      if (place.url !== "/map/") {
+        const detail = document.createElement("a");
+        detail.href = place.url;
+        detail.textContent = "查看詳情";
+        actions.append(detail);
+      }
+      const navigation = document.createElement("a");
+      navigation.href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place.mapQuery)}`;
+      navigation.target = "_blank";
+      navigation.rel = "noopener";
+      navigation.textContent = "Google 導航 ↗";
+      actions.append(navigation);
+
+      body.append(meta, title, status, actions);
+      article.append(symbol, body);
+      return article;
+    };
+
+    const render = () => {
+      const visible = places.filter(isVisible);
+      count && (count.textContent = String(visible.length));
+      panelLabel && (panelLabel.textContent = labels[active] ?? "地圖");
+      list?.replaceChildren(...visible.map(createCard));
+      layer?.replaceChildren(...visible.map(createMarker));
+      list?.scrollTo({ top: 0 });
+    };
+
+    root.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement;
+      const filterButton = target.closest<HTMLButtonElement>("[data-filter]");
+      const viewButton = target.closest<HTMLButtonElement>("[data-view-button]");
+      const marker = target.closest<HTMLButtonElement>("[data-place-marker]");
+
+      if (filterButton) {
+        active = filterButton.dataset.filter ?? "recommended";
+        root.querySelectorAll<HTMLButtonElement>("[data-filter]").forEach((button) => button.setAttribute("aria-pressed", String(button === filterButton)));
+        render();
+      }
+
+      if (viewButton && shell) {
+        const view = viewButton.dataset.viewButton ?? "map";
+        shell.dataset.view = view;
+        root.querySelectorAll<HTMLButtonElement>("[data-view-button]").forEach((button) => button.setAttribute("aria-pressed", String(button === viewButton)));
+      }
+
+      if (marker?.dataset.placeMarker) {
+        const id = marker.dataset.placeMarker;
+        selectPlace(id);
+        if (window.matchMedia("(max-width: 850px)").matches && shell) {
+          shell.dataset.view = "list";
+          root.querySelectorAll<HTMLButtonElement>("[data-view-button]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.viewButton === "list")));
+        }
+        requestAnimationFrame(() => root.querySelector<HTMLElement>(`[data-place-card="${id}"]`)?.scrollIntoView({ block: "nearest" }));
+      }
+    });
+
+    root.addEventListener("pointerover", (event) => {
+      const card = (event.target as HTMLElement).closest<HTMLElement>("[data-place-card]");
+      card?.dataset.placeCard && selectPlace(card.dataset.placeCard);
+    });
+    root.addEventListener("focusin", (event) => {
+      const card = (event.target as HTMLElement).closest<HTMLElement>("[data-place-card]");
+      card?.dataset.placeCard && selectPlace(card.dataset.placeCard);
+    });
+  }
+</script>
+<style is:global>
+  .explorer {
+    --map-attraction: #9f2f24;
+    --map-photo: #7a4b38;
+    --map-food: #b78336;
+    --map-souvenir: #a85032;
+    --map-parking: #2f2924;
+    --map-toilet: #42675d;
+    --map-transport: #416c8b;
+    --map-rest: #687268;
+  }
+
+  .explorer-intro {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .explorer-intro > div { display: grid; gap: .4rem; }
+  .explorer-intro h2 { font-size: clamp(1.65rem, 3vw, 2.35rem); }
+  .explorer-intro > p { max-width: 520px; color: var(--muted); font-size: .9rem; }
+  .explorer-kicker { color: var(--red); font-size: .68rem; font-weight: 900; letter-spacing: .18em; }
+
+  .explorer-controls {
+    margin-bottom: 1rem;
+    padding: .55rem;
+    border: 1px solid var(--border);
+    border-radius: 1.25rem;
+    background: rgba(255,250,242,.68);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .filters {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: .45rem;
+  }
+
+  .filters button {
+    display: grid;
+    min-width: 0;
+    min-height: 70px;
+    align-content: center;
+    gap: .08rem;
+    padding: .65rem .75rem;
+    border: 1px solid transparent;
+    border-radius: .9rem;
+    color: var(--ink);
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color .2s ease, color .2s ease, background .2s ease, transform .2s ease;
+  }
+
+  .filters button:hover { border-color: var(--border); background: white; transform: translateY(-1px); }
+  .filters button span { font-family: var(--serif); font-size: .9rem; font-weight: 850; white-space: nowrap; }
+  .filters button small { overflow: hidden; color: var(--muted); font-size: .59rem; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+  .filters button[aria-pressed="true"] { border-color: var(--ink); color: white; background: var(--ink); box-shadow: 0 8px 20px rgba(47,41,36,.16); }
+  .filters button[aria-pressed="true"] small { color: rgba(255,255,255,.62); }
+  .filters button:last-child { border-left-color: var(--border); }
+
+  .view-switch { display: none; }
+
+  .map-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(350px, .75fr);
+    height: 680px;
+    min-height: 0;
+    border: 1px solid rgba(66,103,93,.28);
+    border-radius: 1.75rem;
+    overflow: hidden;
+    background: var(--surface);
+    box-shadow: 0 28px 80px rgba(72,42,29,.16);
+  }
+
+  .map-stage {
+    display: flex;
+    min-width: 0;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 1.25rem;
+    background:
+      radial-gradient(circle at 82% 12%, rgba(231,198,123,.2), transparent 28%),
+      linear-gradient(145deg, #42675d, #34564d);
+  }
+
+  .map-stage__head {
+    display: flex;
+    min-height: 54px;
+    align-items: start;
+    justify-content: space-between;
+    gap: 1rem;
+    color: white;
+  }
+
+  .map-stage__head > div { display: grid; }
+  .map-stage__head small { color: var(--gold-light); font-size: .59rem; font-weight: 900; letter-spacing: .16em; }
+  .map-stage__head strong { font-family: var(--serif); font-size: 1rem; }
+  .map-stage__head > span { color: rgba(255,255,255,.62); font-size: .65rem; }
+
+  .map-canvas {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 800 / 460;
+    margin-block: auto;
+  }
+
+  .map-canvas .guide-map { height: 100%; border: 0; border-radius: 1.1rem; box-shadow: 0 18px 45px rgba(26,45,39,.28); }
+  .map-canvas .guide-map svg { width: 100%; height: 100%; }
+  .marker-layer { position: absolute; inset: 0; pointer-events: none; }
+
+  .marker {
+    position: absolute;
+    left: var(--marker-x);
+    top: var(--marker-y);
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 2px solid white;
+    border-radius: 50%;
+    place-items: center;
+    color: white;
+    background: var(--map-attraction);
+    box-shadow: 0 5px 14px rgba(47,41,36,.28);
+    cursor: pointer;
+    font-size: .62rem;
+    font-weight: 900;
+    line-height: 1;
+    pointer-events: auto;
+    transform: translate(-50%, -50%);
+    transition: box-shadow .18s ease, transform .18s ease;
+  }
+
+  .marker:hover, .marker.is-active {
+    z-index: 2;
+    box-shadow: 0 0 0 5px rgba(255,255,255,.58), 0 8px 20px rgba(47,41,36,.3);
+    transform: translate(-50%, -50%) scale(1.14);
+  }
+
+  .marker--photo { background: var(--map-photo); }
+  .marker--food { background: var(--map-food); }
+  .marker--souvenir { background: var(--map-souvenir); }
+  .marker--parking { background: var(--map-parking); }
+  .marker--toilet { background: var(--map-toilet); }
+  .marker--transport { background: var(--map-transport); }
+  .marker--rest { background: var(--map-rest); }
+
+  .places-panel {
+    display: flex;
+    min-width: 0;
+    min-height: 0;
+    flex-direction: column;
+    border-left: 1px solid var(--border);
+    overflow: hidden;
+    background: #fffaf2;
+  }
+
+  .panel-head {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 1.3rem 1.1rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,.56);
+  }
+
+  .panel-head > div { display: grid; }
+  .panel-head small { color: var(--red); font-size: .58rem; font-weight: 900; letter-spacing: .15em; }
+  .panel-head strong { font-family: var(--serif); font-size: 1rem; }
+  .panel-head__meta { display: grid; justify-items: end; }
+  .panel-head__meta span { color: var(--green); font-size: .56rem; font-weight: 800; white-space: nowrap; }
+
+  .places-list {
+    display: grid;
+    min-height: 0;
+    flex: 1 1 auto;
+    align-content: start;
+    gap: .45rem;
+    padding: .65rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-color: #b9a793 #eee4d5;
+    scrollbar-width: auto;
+    scrollbar-gutter: stable;
+  }
+
+  .places-list::-webkit-scrollbar { width: 10px; }
+  .places-list::-webkit-scrollbar-track { background: #eee4d5; }
+  .places-list::-webkit-scrollbar-thumb { border: 2px solid #eee4d5; border-radius: 999px; background: #b9a793; }
+
+  .place-card {
+    display: grid;
+    grid-template-columns: 1.9rem minmax(0, 1fr);
+    gap: .65rem;
+    padding: .75rem .8rem;
+    border: 1px solid rgba(218,203,184,.7);
+    border-radius: .85rem;
+    background: rgba(255,255,255,.72);
+    transition: border-color .18s ease, background .18s ease, box-shadow .18s ease, transform .18s ease;
+  }
+
+  .place-card:hover, .place-card.is-active {
+    border-color: rgba(159,47,36,.3);
+    background: white;
+    box-shadow: 0 8px 22px rgba(72,50,35,.1);
+    transform: translateX(-2px);
+  }
+
+  .place-symbol {
+    display: grid;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 50%;
+    place-items: center;
+    color: white;
+    background: var(--map-attraction);
+    font-size: .6rem;
+    font-weight: 900;
+  }
+
+  .place-symbol--photo { background: var(--map-photo); }
+  .place-symbol--food { background: var(--map-food); }
+  .place-symbol--souvenir { background: var(--map-souvenir); }
+  .place-symbol--parking { background: var(--map-parking); }
+  .place-symbol--toilet { background: var(--map-toilet); }
+  .place-symbol--transport { background: var(--map-transport); }
+  .place-symbol--rest { background: var(--map-rest); }
+  .place-card__body { display: grid; min-width: 0; }
+
+  .place-card__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .6rem;
+    margin-bottom: .15rem;
+  }
+
+  .place-card__meta span { color: var(--red); font-size: .6rem; font-weight: 850; }
+  .place-card__meta small { overflow: hidden; color: var(--muted); font-size: .58rem; text-overflow: ellipsis; white-space: nowrap; }
+  .place-card__body > strong { overflow: hidden; font-family: var(--serif); font-size: .9rem; text-overflow: ellipsis; white-space: nowrap; }
+  .place-card__body > p { width: max-content; margin-top: .2rem; padding: .08rem .42rem; border-radius: 999px; color: var(--muted); background: var(--bg-warm); font-size: .58rem; line-height: 1.5; }
+
+  .place-card__actions {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    margin-top: .45rem;
+  }
+
+  .place-card__actions a { color: var(--red); font-size: .62rem; font-weight: 850; text-decoration: none; }
+  .place-card__actions a:last-child { margin-left: auto; padding: .18rem .5rem; border-radius: 999px; color: var(--green); background: #e7eee9; }
+
+  .map-footnote {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    margin-top: .85rem;
+    padding-inline: .35rem;
+    color: var(--muted);
+    font-size: .7rem;
+  }
+
+  .map-footnote > span { color: var(--red); font-weight: 900; }
+  .map-footnote a { color: var(--green); font-weight: 850; text-decoration: none; }
+
+  @media (max-width: 980px) {
+    .filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .filters button:last-child { border-left-color: transparent; }
+    .map-shell { grid-template-columns: minmax(0, 1.35fr) minmax(320px, .75fr); }
+  }
+
+  @media (max-width: 850px) {
+    .explorer-intro { align-items: start; flex-direction: column; gap: .75rem; }
+    .explorer-intro > p { width: 100%; }
+    .explorer-controls { display: grid; gap: .65rem; padding: 0; border: 0; background: transparent; box-shadow: none; }
+    .filters { display: flex; gap: .5rem; padding-bottom: .2rem; overflow-x: auto; overscroll-behavior-inline: contain; scrollbar-width: none; }
+    .filters::-webkit-scrollbar { display: none; }
+    .filters button { min-width: 140px; min-height: 64px; border-color: var(--border); background: var(--surface); scroll-snap-align: start; }
+    .view-switch { display: grid; grid-template-columns: 1fr 1fr; padding: .3rem; border: 1px solid var(--border); border-radius: .9rem; background: var(--bg-warm); }
+    .view-switch button { min-height: 42px; border: 0; border-radius: .65rem; color: var(--muted); background: transparent; cursor: pointer; font-size: .75rem; font-weight: 850; }
+    .view-switch button[aria-pressed="true"] { color: white; background: var(--green); box-shadow: 0 5px 14px rgba(66,103,93,.18); }
+    .map-shell { display: block; height: auto; border-radius: 1.35rem; }
+    .map-shell[data-view="map"] .places-panel, .map-shell[data-view="list"] .map-stage { display: none; }
+    .map-stage { min-height: 0; padding: 1rem; }
+    .map-stage__head { min-height: 52px; }
+    .map-canvas { margin-top: .25rem; }
+    .places-panel { overflow: visible; border-left: 0; }
+    .places-list { min-height: auto; flex: none; overflow: visible; }
+    .map-footnote { grid-template-columns: auto 1fr; align-items: start; }
+    .map-footnote a { grid-column: 2; }
+  }
+
+  @media (max-width: 520px) {
+    .explorer-intro > p { font-size: .82rem; }
+    .filters button { min-width: 128px; }
+    .map-stage__head > span { display: none; }
+    .marker { width: 1.65rem; height: 1.65rem; border-width: 1.5px; font-size: .52rem; }
+    .panel-head { align-items: start; flex-direction: column; gap: .25rem; padding: 1rem; }
+    .panel-head__meta { justify-items: start; }
+    .panel-head__meta span { display: none; }
+    .places-list { padding: .55rem; }
+    .place-card { padding: .8rem; }
+    .place-card__actions { gap: .7rem; }
+    .map-footnote { gap: .5rem .8rem; }
+  }
+</style>

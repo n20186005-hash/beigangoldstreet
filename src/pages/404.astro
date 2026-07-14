@@ -1,0 +1,5 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="找不到頁面｜北港老街指南" description="這個頁面不存在或已移動。" noindex={true}><section class="not-found"><div class="container"><span>404・迷路了</span><h1>這條巷弄，<br/>暫時沒有資料</h1><p>網址可能已移動，先回首頁，或從地圖重新找到你要的景點。</p><div><a class="button" href="/">回到首頁</a><a class="button button--outline" href="/map/">開啟地圖</a></div></div></section></BaseLayout>
+<style>.not-found{display:grid;min-height:65vh;align-items:center;background:linear-gradient(135deg,var(--bg-paper),var(--bg-warm))}.not-found span{color:var(--red);font-weight:900;letter-spacing:.12em}.not-found h1{margin:1rem 0}.not-found p{color:var(--muted)}.not-found div div{display:flex;gap:.7rem;margin-top:1.5rem}</style>

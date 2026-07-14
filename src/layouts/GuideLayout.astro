@@ -1,0 +1,53 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+interface Props {
+  title: string;
+  seoTitle?: string;
+  eyebrow: string;
+  description: string;
+  tone?: "red" | "green" | "gold" | "ink";
+  breadcrumbs?: { label: string; href?: string }[];
+}
+const { title, seoTitle, eyebrow, description, tone = "red", breadcrumbs } = Astro.props;
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: title,
+  description,
+  inLanguage: "zh-Hant-TW",
+  author: { "@type": "Organization", name: "北港老街指南" },
+  publisher: { "@type": "Organization", name: "北港老街指南" },
+  mainEntityOfPage: new URL(Astro.url.pathname, "https://beigangoldstreet.com").href,
+};
+---
+<BaseLayout title={seoTitle ?? `${title}｜北港老街指南`} description={description}>
+  <PageHero {title} {eyebrow} {description} {tone} {breadcrumbs}/>
+  <div class="container guide-grid">
+    <article class="guide-content prose"><slot /></article>
+    <aside class="guide-aside"><slot name="aside" /></aside>
+  </div>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+</BaseLayout>
+
+<style>
+  .guide-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; align-items: start; gap: clamp(2.5rem, 7vw, 6rem); padding-block: clamp(3rem, 7vw, 6rem); }
+  .guide-aside { position: sticky; top: 7rem; }
+  :global(.prose) { max-width: 780px; }
+  :global(.prose > * + *) { margin-top: 1.2rem; }
+  :global(.prose h2) { margin-top: 3.5rem; padding-top: .4rem; font-size: clamp(1.55rem, 3vw, 2.15rem); }
+  :global(.prose h2:first-child) { margin-top: 0; }
+  :global(.prose h3) { margin-top: 2.2rem; font-family: var(--sans); font-size: 1.12rem; }
+  :global(.prose p), :global(.prose li) { color: #514942; }
+  :global(.prose ul), :global(.prose ol) { padding-left: 1.3rem; }
+  :global(.prose a) { color: var(--red); font-weight: 700; }
+  :global(.prose .answer) { padding: 1.2rem 1.4rem; border-left: 4px solid var(--red); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; background: var(--surface); font-size: 1.08rem; }
+  :global(.aside-card) { padding: 1.25rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); box-shadow: var(--shadow-sm); }
+  :global(.aside-card + .aside-card) { margin-top: 1rem; }
+  :global(.aside-card h2) { margin-bottom: .75rem; font-family: var(--sans); font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; }
+  :global(.aside-card p), :global(.aside-card li) { color: var(--muted); font-size: .82rem; }
+  :global(.aside-card ul) { padding-left: 1rem; }
+  :global(.aside-card .button) { width: 100%; margin-top: .8rem; }
+  @media (max-width: 900px) { .guide-grid { grid-template-columns: 1fr; }.guide-aside { position: static; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }.guide-aside :global(.aside-card + .aside-card) { margin-top: 0; } }
+  @media (max-width: 560px) { .guide-aside { grid-template-columns: 1fr; } }
+</style>

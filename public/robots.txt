@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://beigangoldstreet.com/sitemap-index.xml

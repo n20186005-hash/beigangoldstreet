@@ -1,0 +1,14 @@
+---
+import GuideLayout from "../../layouts/GuideLayout.astro";
+---
+<GuideLayout title="第一次來北港怎麼逛" eyebrow="FIRST VISIT" description="先停車、再進朝天宮，從中山路走進巷弄，最後用午餐或伴手禮收尾。這是最不容易來回折返的順序。" tone="red" breadcrumbs={[{label:"首頁",href:"/"},{label:"行程",href:"/itineraries/"},{label:"第一次來"}] }>
+  <p class="answer">第一次到訪優先走「停車 → 朝天宮 → 中山路老街 → 工藝坊與巷弄 → 美食與伴手禮」。有多餘時間，再延伸到水道頭與女兒橋。</p>
+  <h2>第一步：車停外圍</h2><p>導航到停車區，不是廟門口。活動日依警方分流，記下入口與停車區域，回程才不會找不到車。</p>
+  <h2>第二步：先看朝天宮</h2><p>先理解廟埕與參拜動線，再觀察建築工藝。遇到進香團讓儀式先通過，不在出入口停下拍照。</p>
+  <h2>第三步：沿中山路慢慢走</h2><p>老街不長，別只低頭找店。抬頭看二樓街屋、燈籠和街道向廟口收束的透視。</p>
+  <h2>第四步：轉進工藝巷弄</h2><p>北港工藝坊、甕牆與共和街一帶能讓行程從熱鬧商街轉換到較安靜的地方工藝。</p>
+  <h2>第五步：按時間吃，不追名單</h2><p>早餐早到，午餐避開 12 點，下午再買伴手禮。晚上才到就把範圍擴大到老街外的餐館。</p>
+  <h2>選哪條正式路線？</h2><div class="route-links"><a href="/itineraries/two-hours/"><strong>只有 2 小時</strong><span>朝天宮＋老街＋一項小吃 →</span></a><a href="/itineraries/half-day/"><strong>第一次最推薦</strong><span>加上工藝坊與完整用餐 →</span></a><a href="/itineraries/one-day/"><strong>有完整一天</strong><span>下午水道頭、傍晚河岸 →</span></a></div>
+  <div slot="aside" class="aside-card"><h2>四個先確認</h2><ul><li>停車與管制</li><li>回程末班車</li><li>最想吃的店休</li><li>最近的廁所</li></ul></div><div slot="aside" class="aside-card"><h2>實用入口</h2><p><a href="/parking/">停車</a>・<a href="/toilets/">公廁</a>・<a href="/map/">地圖</a></p></div>
+</GuideLayout>
+<style>.route-links{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem}.route-links a{display:flex;min-height:150px;padding:1rem;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--ink);background:var(--surface);flex-direction:column;text-decoration:none}.route-links span{margin-top:auto;color:var(--red);font-size:.75rem;font-weight:800}@media(max-width:650px){.route-links{grid-template-columns:1fr}.route-links a{min-height:110px}}</style>

@@ -1,0 +1,9 @@
+---
+import GuideLayout from "../../layouts/GuideLayout.astro";
+import { souvenirGuides } from "../../data/souvenirs";
+export function getStaticPaths(){return souvenirGuides.map(guide=>({params:{slug:guide.slug},props:{guide}}));}
+const { guide }=Astro.props;
+---
+<GuideLayout title={guide.title} eyebrow={guide.eyebrow} description={guide.description} tone="gold" breadcrumbs={[{label:"首頁",href:"/"},{label:"伴手禮",href:"/souvenirs/"},{label:guide.title}]}>
+  <p class="answer">{guide.description}</p><h2>選購時看什麼？</h2><ol>{guide.checks.map(item=><li>{item}</li>)}</ol><h2>在老街什麼時候買？</h2><p>建議放在下午或離開前，但若目標店家可能早收，先看營業資訊。節慶前後熱門品項與禮盒可能需要預訂。</p><h2>怎麼避免買太多？</h2><p>先買一份小包裝試吃，再決定是否追加。多人同行可分工採買，記下保存期限與提貨店家。</p><h2>資料與合作原則</h2><p>本站目前不提供付費排名。未來如有店家贊助或合作，會清楚標示「合作內容」或「贊助店家」。</p><div slot="aside" class="aside-card"><h2>搭配路線</h2><p><a href="/itineraries/half-day/">半日經典路線</a><br/><a href="/food/desserts/">甜點與糕餅</a><br/><a href="/map/">伴手禮地圖</a></p></div>
+</GuideLayout>

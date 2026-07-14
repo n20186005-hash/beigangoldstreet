@@ -1,0 +1,26 @@
+---
+import SiteLogo from "./SiteLogo.astro";
+import { site } from "../data/site";
+---
+<footer>
+  <div class="container footer-grid">
+    <div class="brand"><SiteLogo inverse /><p>{site.tagline}</p></div>
+    <div><h2>快速規劃</h2><a href="/parking/">停車資訊</a><a href="/toilets/">公廁位置</a><a href="/transport/">大眾運輸</a><a href="/itineraries/">路線行程</a></div>
+    <div><h2>認識本站</h2><a href="/about/">關於本站</a><a href="/sources/">資料來源</a><a href="/updates/">更新紀錄</a><a href="/corrections/">資料修正</a></div>
+    <div class="statement"><h2>資料更新</h2><p>{site.updateNotice}</p></div>
+  </div>
+  <div class="container legal"><span>© 2026 北港老街指南</span><a href="/privacy/">隱私說明</a></div>
+</footer>
+
+<style>
+  footer { padding: 4.5rem 0 1.3rem; color: rgba(255,255,255,.72); background: #2f2924; }
+  .footer-grid { display: grid; grid-template-columns: 1.4fr .7fr .7fr 1.4fr; gap: 3rem; }
+  .brand p { margin-top: 1rem; color: var(--gold-light); font-family: var(--serif); }
+  h2 { margin-bottom: 1rem; color: white; font-family: var(--sans); font-size: .76rem; letter-spacing: .15em; text-transform: uppercase; }
+  .footer-grid a { display: block; width: fit-content; margin-top: .5rem; font-size: .9rem; text-decoration: none; }
+  .statement p { font-size: .85rem; line-height: 1.8; }
+  .legal { display: flex; margin-top: 3.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,.12); gap: 1rem; font-size: .74rem; }
+  .legal a { margin-left: auto; }
+  @media (max-width: 880px) { .footer-grid { grid-template-columns: 1fr 1fr; } .statement { grid-column: 1 / -1; } }
+  @media (max-width: 520px) { .footer-grid { grid-template-columns: 1fr; gap: 2rem; } .statement { grid-column: auto; } .legal { flex-wrap: wrap; } .legal a { margin-left: 0; } }
+</style>

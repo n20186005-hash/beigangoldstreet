@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f7f0e3"/>
+  <path d="M0 500 600 330l600 170v130H0z" fill="#efe1cc"/>
+  <path d="M770 260h300l-60-55-38 22-52-105-52 105-38-22z" fill="#9f2f24" stroke="#2f2924" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M810 270v180h220V270M870 450V330h100v120" fill="none" stroke="#2f2924" stroke-width="13"/>
+  <circle cx="920" cy="390" r="20" fill="#b78336"/>
+  <text x="100" y="220" fill="#9f2f24" font-size="38" font-family="sans-serif" font-weight="700" letter-spacing="8">BEIGANG OLD STREET GUIDE</text>
+  <text x="100" y="330" fill="#2f2924" font-size="92" font-family="serif" font-weight="700">北港老街指南</text>
+  <text x="105" y="410" fill="#6f655c" font-size="38" font-family="sans-serif">停車・美食・交通・廁所與一日遊</text>
+</svg>

@@ -1,0 +1,18 @@
+---
+import GuideLayout from "../../layouts/GuideLayout.astro";
+import StatusBadge from "../../components/StatusBadge.astro";
+import { events } from "../../data/events";
+export function getStaticPaths(){return events.map(event=>({params:{slug:event.slug},props:{event}}));}
+const { event }=Astro.props;
+---
+<GuideLayout title={event.title} eyebrow={event.label} description={event.description} tone="red" breadcrumbs={[{label:"首頁",href:"/"},{label:"活動",href:"/events/"},{label:event.title}]}>
+  <div class="event-status"><StatusBadge status="unknown" label={event.status}/><strong>{event.season}</strong></div>
+  <h2>這個活動是什麼？</h2><p>{event.description}</p>
+  <h2>遊客要怎麼準備？</h2><ol>{event.advice.map(item=><li>{item}</li>)}</ol>
+  <h2>交通與停車怎麼處理？</h2><p>活動交通方案不是常態規則。請找到標有當年日期的主辦或縣府公告，再設定停車目的地。外圍停車加接駁通常比開進廟口穩妥。</p>
+  <h2>帶長輩或小孩適合嗎？</h2><p>可參加，但要避開鞭炮、陣頭與最密集的人潮。先約定集合點，把廁所、飲水和離場路線放在看表演之前。</p>
+  <h2>下雨還會舉行嗎？</h2><p>宗教儀式與戶外展演對天候的處理不同，是否延期或調整必須看當日主辦公告，本站不自行推測。</p>
+  <h2>資料來源與限制</h2><p>主要來源為<a href={event.source} target="_blank" rel="noopener">官方公開資訊</a>；下一屆資訊未公告前不會沿用往年日期。</p>
+  <div slot="aside" class="aside-card"><h2>活動行前</h2><ul><li>日期是否為今年</li><li>管制時段與範圍</li><li>停車與接駁站</li><li>回程末班時間</li></ul></div><div slot="aside" class="aside-card"><h2>相關頁面</h2><p><a href="/parking/">停車指南</a><br/><a href="/transport/">大眾運輸</a><br/><a href="/toilets/">公廁位置</a></p></div>
+</GuideLayout>
+<style>.event-status{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface)}.event-status strong{font-size:.82rem}</style>

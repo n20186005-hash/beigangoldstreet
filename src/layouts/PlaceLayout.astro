@@ -1,0 +1,54 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import StatusBadge from "../components/StatusBadge.astro";
+import Icon from "../components/Icon.astro";
+
+const { entry } = Astro.props;
+const data = entry.data;
+const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.mapQuery)}`;
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "TouristAttraction",
+  name: data.title,
+  description: data.description,
+  address: data.address,
+  isAccessibleForFree: data.admission.includes("免費"),
+  publicAccess: true,
+  url: new URL(`/attractions/${entry.id}/`, "https://beigangoldstreet.com").href,
+  ...(data.officialUrl ? { sameAs: data.officialUrl } : {}),
+};
+---
+<BaseLayout title={`${data.title}｜開放資訊、停留時間與交通｜北港老街指南`} description={data.description}>
+  <header class="place-hero">
+    <div class="container">
+      <Breadcrumbs items={[{ label: "首頁", href: "/" }, { label: "景點", href: "/attractions/" }, { label: data.title }]}/>
+      <div class="place-grid">
+        <div class="place-copy"><div class="place-tags"><span>{data.categoryLabel}</span><StatusBadge status={data.status}/></div><h1>{data.title}</h1><p>{data.description}</p><div class="place-actions"><a class="button" href={mapUrl} target="_blank" rel="noopener"><Icon name="pin" size={19}/>Google 地圖</a>{data.officialUrl && <a class="button button--outline" href={data.officialUrl} target="_blank" rel="noopener">官方資訊 ↗</a>}</div></div>
+        <div class="place-art" aria-hidden="true"><span>北港</span><div></div><small>{String(data.order).padStart(2, "0")}</small></div>
+      </div>
+    </div>
+  </header>
+  <section class="facts-wrap"><div class="container facts-grid">
+    <div><small>開放時間</small><strong>{data.openingHours}</strong></div><div><small>門票</small><strong>{data.admission}</strong></div><div><small>建議停留</small><strong>{data.recommendedDuration}</strong></div><div><small>距朝天宮</small><strong>{data.walkMinutesFromChaotianTemple === 0 ? "就是這裡" : `步行約 ${data.walkMinutesFromChaotianTemple} 分`}</strong></div>
+    <div><small>公廁</small><strong>{data.toilet}</strong></div><div><small>無障礙</small><strong>{data.accessibility}</strong></div><div><small>目前狀態</small><StatusBadge status={data.status}/></div><div><small>資料原則</small><strong>異動以現場公告為準</strong></div>
+  </div></section>
+  <div class="container content-grid">
+    <article class="place-content prose"><slot /></article>
+    <aside>
+      <div class="aside-card"><h2>地址與導航</h2><p>{data.address}</p><a class="button button--outline" href={mapUrl} target="_blank" rel="noopener">開始導航 ↗</a></div>
+      <div class="aside-card"><h2>無障礙提醒</h2><p>{data.accessibilityNote}</p></div>
+      <div class="aside-card source-card"><h2>資料來源</h2><a href={data.sourceUrl} target="_blank" rel="noopener">{data.sourceName} ↗</a><p>臨時調整以現場公告為準。</p></div>
+    </aside>
+  </div>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+</BaseLayout>
+
+<style>
+  .place-hero { overflow: hidden; padding-block: clamp(2.5rem, 7vw, 6rem); background: linear-gradient(130deg, var(--bg-paper) 0 60%, var(--bg-warm) 60%); }
+  .place-grid { display: grid; grid-template-columns: 1fr 260px; align-items: end; gap: 3rem; }.place-copy { max-width: 800px; }.place-tags { display: flex; align-items: center; gap: .7rem; }.place-tags > span { color: var(--red); font-size: .75rem; font-weight: 900; letter-spacing: .12em; }.place-copy h1 { margin: 1rem 0; }.place-copy > p { max-width: 680px; color: var(--muted); font-size: 1.12rem; }.place-actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.7rem; }
+  .place-art { position: relative; display: grid; aspect-ratio: 1; border-radius: 50% 50% 8% 50%; overflow: hidden; place-items: center; color: white; background: var(--red); transform: rotate(-6deg); }.place-art::before, .place-art::after { position: absolute; width: 130%; height: 2px; background: rgba(255,255,255,.34); content: ""; transform: rotate(45deg); }.place-art::after { transform: rotate(-45deg); }.place-art span { font-family: var(--serif); font-size: 2rem; font-weight: 800; letter-spacing: .4em; writing-mode: vertical-rl; }.place-art small { position: absolute; right: 2rem; bottom: 1.4rem; color: var(--gold-light); font-size: 1rem; }
+  .facts-wrap { border-block: 1px solid var(--border); background: var(--surface); }.facts-grid { display: grid; grid-template-columns: repeat(4, 1fr); }.facts-grid > div { display: grid; min-height: 112px; align-content: center; padding: 1rem; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); gap: .25rem; }.facts-grid > div:nth-child(4n) { border-right: 0; }.facts-grid > div:nth-child(n+5) { border-bottom: 0; }.facts-grid small { color: var(--muted); font-size: .7rem; }.facts-grid strong { font-size: .86rem; line-height: 1.55; }
+  .content-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; align-items: start; gap: clamp(3rem, 8vw, 7rem); padding-block: clamp(3rem, 7vw, 6rem); }.place-content { max-width: 760px; }.place-content :global(h2) { margin: 3.4rem 0 1rem; font-size: clamp(1.5rem, 3vw, 2rem); }.place-content :global(h2:first-child) { margin-top: 0; }.place-content :global(p) { color: #514942; }.place-content :global(p + p) { margin-top: 1rem; }aside { position: sticky; top: 7rem; }.aside-card { padding: 1.2rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); box-shadow: var(--shadow-sm); }.aside-card + .aside-card { margin-top: 1rem; }.aside-card h2 { margin-bottom: .7rem; font-family: var(--sans); font-size: .73rem; letter-spacing: .13em; text-transform: uppercase; }.aside-card p { color: var(--muted); font-size: .82rem; }.aside-card .button { width: 100%; margin-top: .8rem; }.source-card a { color: var(--red); font-size: .85rem; font-weight: 800; }.source-card p { margin-top: .7rem; padding-top: .7rem; border-top: 1px dashed var(--border); }
+  @media(max-width: 800px) { .place-grid { grid-template-columns: 1fr; }.place-art { display: none; }.facts-grid { grid-template-columns: 1fr 1fr; }.facts-grid > div:nth-child(2n) { border-right: 0; }.facts-grid > div:nth-child(n+5) { border-bottom: 1px solid var(--border); }.facts-grid > div:nth-child(n+7) { border-bottom: 0; }.content-grid { grid-template-columns: 1fr; } aside { position: static; } }
+</style>

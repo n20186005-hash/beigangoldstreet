@@ -1,0 +1,15 @@
+---
+import StatusBadge from "./StatusBadge.astro";
+const { area, index } = Astro.props;
+const statusMap: Record<string,string> = { open: "open", notice: "notice", seasonal: "seasonal", unknown: "unknown" };
+const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(area.mapQuery)}`;
+---
+<article class="parking-card">
+  <div class="card-head"><span class="number">{String(index + 1).padStart(2,"0")}</span><div><StatusBadge status={statusMap[area.status]} label={area.statusLabel}/><h2>{area.name}</h2><p>{area.note}</p></div></div>
+  <dl><div><dt>車種</dt><dd>{area.vehicle}</dd></div><div><dt>收費</dt><dd>{area.fee}</dd></div><div><dt>開放</dt><dd>{area.hours}</dd></div><div><dt>步行</dt><dd>{area.walk}</dd></div><div><dt>公廁</dt><dd>{area.toilet}</dd></div><div><dt>地面</dt><dd>{area.surface}</dd></div><div><dt>遮陽</dt><dd>{area.shade}</dd></div><div><dt>無障礙車位</dt><dd>{area.accessible}</dd></div></dl>
+  <footer><div><a href={area.sourceUrl} target="_blank" rel="noopener">來源：{area.sourceLabel} ↗</a></div><a class="button button--outline" href={mapUrl} target="_blank" rel="noopener">地圖導航 ↗</a></footer>
+</article>
+<style>
+  .parking-card { padding: clamp(1.2rem, 3vw, 2rem); border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); box-shadow: var(--shadow-sm); }.parking-card + .parking-card { margin-top: 1rem; }.card-head { display: grid; grid-template-columns: 3rem 1fr; gap: 1rem; }.number { color: var(--gold); font-family: var(--serif); font-size: 1.1rem; }.card-head h2 { margin: .55rem 0; font-size: 1.55rem; }.card-head p { color: var(--muted); font-size: .88rem; }.parking-card dl { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 1.5rem; border-top: 1px solid var(--border); border-left: 1px solid var(--border); }.parking-card dl div { min-height: 82px; padding: .7rem; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }.parking-card dt { color: var(--muted); font-size: .68rem; }.parking-card dd { margin: .2rem 0 0; font-size: .78rem; font-weight: 700; line-height: 1.45; }.parking-card footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.2rem; }.parking-card footer > div { display: grid; color: var(--muted); font-size: .68rem; }.parking-card footer a:not(.button) { color: var(--red); font-weight: 700; }
+  @media(max-width: 680px) { .parking-card dl { grid-template-columns: 1fr 1fr; }.parking-card footer { align-items: stretch; flex-direction: column; }.parking-card footer .button { width: 100%; } }
+</style>

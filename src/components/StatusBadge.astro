@@ -1,0 +1,10 @@
+---
+const { status = "unknown", label } = Astro.props;
+const labels: Record<string, string> = { open: "正常開放", limited: "部分開放", "temporarily-closed": "暫停開放", construction: "施工調整", seasonal: "期間限定", unknown: "尚待確認", notice: "請先確認" };
+---
+<span class:list={["badge", `badge--${status}`]}><i></i>{label ?? labels[status] ?? labels.unknown}</span>
+<style>
+  .badge { display: inline-flex; align-items: center; gap: .4rem; padding: .25rem .65rem; border-radius: 999px; color: #5e5750; background: #ebe5dc; font-size: .76rem; font-weight: 800; line-height: 1.5; }
+  i { width: .45rem; height: .45rem; border: 1px solid currentColor; border-radius: 50%; background: currentColor; }
+  .badge--open { color: var(--open); background: #e1eee7; }.badge--limited, .badge--notice, .badge--seasonal { color: #875616; background: #f7e7c8; }.badge--temporarily-closed, .badge--construction { color: var(--alert); background: #f4dfdc; }
+</style>
