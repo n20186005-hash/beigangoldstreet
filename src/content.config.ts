@@ -24,6 +24,9 @@ const attractions = defineCollection({
     officialUrl: z.url().optional(),
     mapQuery: z.string(),
     order: z.number(),
+    googleRating: z
+      .object({ value: z.number(), count: z.number() })
+      .optional(),
   }),
 });
 

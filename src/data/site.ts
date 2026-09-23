@@ -20,6 +20,31 @@ export const navItems = [
   { href: "/events/", label: "活動" },
 ];
 
+// 北港老街（中山路）實體事實唯一來源。
+// 評分來自 Google 地圖商家資料（2026 年 9 月同步），僅作指示性參考，不構成本站評論。
+export const attraction = {
+  name: "北港老街",
+  alternateName: "Beigang Old Street",
+  description:
+    "北港老街（中山路）是雲林縣北港鎮以朝天宮廟口向北港溪延伸的傳統商街，融合媽祖信仰、糕餅麻油老店、在地小吃與二層式街屋建築。",
+  address: {
+    streetAddress: "中山路",
+    addressLocality: "北港鎮",
+    addressRegion: "雲林縣",
+    postalCode: "651",
+    addressCountry: "TW",
+  },
+  geo: { lat: 23.5672, lng: 120.3044 },
+  plusCode: "H873+PH 北港鎮 台灣雲林縣",
+  mapsUrl: "https://maps.app.goo.gl/zhHGbZMsWz8ivkqw8",
+  rating: {
+    value: 4.4,
+    count: 7652,
+    source: "Google Maps",
+    sourceUrl: "https://maps.app.goo.gl/zhHGbZMsWz8ivkqw8",
+  },
+};
+
 export const sources = {
   yunlinTourism: {
     name: "慢遊雲林（雲林縣政府文化觀光處）",

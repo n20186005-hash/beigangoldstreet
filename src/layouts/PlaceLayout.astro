@@ -17,6 +17,15 @@ const schema = {
   publicAccess: true,
   url: new URL(`/attractions/${entry.id}/`, "https://beigangoldstreet.com").href,
   ...(data.officialUrl ? { sameAs: data.officialUrl } : {}),
+  ...(data.googleRating ? {
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: data.googleRating.value,
+      reviewCount: data.googleRating.count,
+      bestRating: 5,
+      worstRating: 1,
+    },
+  } : {}),
 };
 ---
 <BaseLayout title={`${data.title}｜開放資訊、停留時間與交通｜北港老街指南`} description={data.description}>
@@ -31,7 +40,7 @@ const schema = {
   </header>
   <section class="facts-wrap"><div class="container facts-grid">
     <div><small>開放時間</small><strong>{data.openingHours}</strong></div><div><small>門票</small><strong>{data.admission}</strong></div><div><small>建議停留</small><strong>{data.recommendedDuration}</strong></div><div><small>距朝天宮</small><strong>{data.walkMinutesFromChaotianTemple === 0 ? "就是這裡" : `步行約 ${data.walkMinutesFromChaotianTemple} 分`}</strong></div>
-    <div><small>公廁</small><strong>{data.toilet}</strong></div><div><small>無障礙</small><strong>{data.accessibility}</strong></div><div><small>目前狀態</small><StatusBadge status={data.status}/></div><div><small>資料原則</small><strong>異動以現場公告為準</strong></div>
+    <div><small>公廁</small><strong>{data.toilet}</strong></div><div><small>無障礙</small><strong>{data.accessibility}</strong></div><div><small>目前狀態</small><StatusBadge status={data.status}/></div>{data.googleRating && <div><small>Google 評分</small><strong>★ {data.googleRating.value}（{data.googleRating.count.toLocaleString()}）</strong></div>}<div><small>資料原則</small><strong>異動以現場公告為準</strong></div>
   </div></section>
   <div class="container content-grid">
     <article class="place-content prose"><slot /></article>

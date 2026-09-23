@@ -3,7 +3,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import HeroScene from "../components/HeroScene.astro";
 import GuideMap from "../components/GuideMap.astro";
 import Icon from "../components/Icon.astro";
-import { site } from "../data/site";
+import { site, attraction } from "../data/site";
+import { attractionSchema, faqSchema } from "../utils/schema";
 
 const statuses = [
   { label: "停車", status: "注意", tone: "notice", title: "活動期間提早到達", text: "廟口周邊車位有限；進香與大型活動時請優先利用外圍停車區。", source: "雲林旅遊網／現場公告" },
@@ -35,7 +36,7 @@ const attractions = [
   { href: "/attractions/daughter-bridge/", no: "陸", name: "北港女兒橋", kind: "河岸散步", duration: "建議 20–30 分", text: "傍晚適合沿北港溪散步，將老街的熱鬧收束成一段河岸風景。" },
 ];
 
-const faqs = [
+const faqs: [string, string][] = [
   ["北港老街需要門票嗎？", "老街是一般街區，不需要門票；朝天宮可自由參拜。個別展館、體驗或期間限定活動若有收費，請以主辦單位公告為準。"],
   ["北港老街幾點去最好？", "想吃早餐可在 8 點前後抵達；單純散步建議上午 9 點至下午 4 點。夏季可避開正午，傍晚再往女兒橋看河岸。"],
   ["北港老街晚上還有店嗎？", "有部分餐館與小吃營業，但老街不是每日夜市，傳統店家常在傍晚前後陸續打烊。晚到請先確認目標店家。"],
@@ -45,8 +46,25 @@ const faqs = [
   ["北港老街哪裡有廁所？", "可先查本站公廁頁的遊客中心、停車區與公共設施位置。店家廁所通常需要消費，無障礙與尿布台狀態應以現場標示為準。"],
   ["下雨天還能玩嗎？", "可以縮短成朝天宮、老街騎樓、工藝坊等室內與遮蔽路線；雨勢大時不建議走河岸，並留意老街部分路面濕滑。"],
 ];
+
+const homeSchemas = [
+  attractionSchema({
+    name: attraction.name,
+    description: attraction.description,
+    address: attraction.address,
+    url: site.url + "/",
+    geo: attraction.geo,
+    mapsUrl: attraction.mapsUrl,
+    rating: attraction.rating,
+  }),
+  faqSchema(faqs),
+];
 ---
-<BaseLayout>
+<BaseLayout
+  title="北港老街指南（雲林北港）｜停車、美食、交通、景點與一日遊"
+  description="北港老街非官方旅遊指南：朝天宮周邊停車場、公廁、交通、在地美食、營業時間與一日遊路線一次查好，第一次來北港也不慌。"
+  schema={homeSchemas}
+>
   <section class="hero">
     <div class="container hero-grid">
       <div class="hero-copy">
@@ -117,7 +135,7 @@ const faqs = [
     <div class="container faq-grid"><div class="faq-intro"><p class="eyebrow">BEFORE YOU GO</p><h2 id="faq-title">出發前，<br/>先把疑問放下</h2><p>如果你的問題還沒被回答，歡迎回報給我們補充。</p><a class="link-arrow" href="/faq/">查看完整常見問題</a></div><div class="faq-list">{faqs.map(([question, answer], index) => <details open={index === 0}><summary><span>{String(index + 1).padStart(2, "0")}</span>{question}<i>＋</i></summary><p>{answer}</p></details>)}</div></div>
   </section>
 
-  <section class="trust-section"><div class="container trust-wrap"><div><p class="eyebrow">PRACTICAL & UPDATED</p><h2>一份站在旅客這邊的<br/>北港實用指南</h2></div><div class="trust-copy"><p>{site.updateNotice}</p><div><a href="/sources/">資料來源</a><a href="/editorial-policy/">編輯原則</a><a href="/corrections/">回報修正</a></div></div></div></section>
+  <section class="trust-section"><div class="container trust-wrap"><div><p class="eyebrow">PRACTICAL & UPDATED</p><h2>一份站在旅客這邊的<br/>北港實用指南</h2></div><div class="trust-copy"><p class="trust-rating"><span class="stars" aria-hidden="true">★</span> 北港老街 Google 評分 <strong>4.4 / 5</strong>（{attraction.rating.count.toLocaleString()} 則評論）<a href={attraction.mapsUrl} target="_blank" rel="noopener">檢視地圖評論 ↗</a></p><p>{site.updateNotice}</p><div><a href="/sources/">資料來源</a><a href="/editorial-policy/">編輯原則</a><a href="/corrections/">回報修正</a></div></div></div></section>
 </BaseLayout>
 
 <style>
@@ -205,6 +223,8 @@ const faqs = [
   .event-list a { display: grid; grid-template-columns: 3rem 1fr auto; min-height: 106px; align-items: center; gap: 1rem; border-bottom: 1px solid rgba(255,255,255,.16); color: white; text-decoration: none; transition: padding .2s, background .2s; }.event-list a:hover { padding-inline: 1rem; color: white; background: rgba(255,255,255,.05); }.event-list > a > span { color: var(--gold-light); font-family: var(--serif); }.event-list small { color: rgba(255,255,255,.5); }.event-list h3 { margin-top: .15rem; }.event-list i { color: var(--gold-light); font-style: normal; }
   .faq-grid { display: grid; grid-template-columns: .55fr 1.45fr; gap: clamp(3rem, 8vw, 8rem); }.faq-intro { position: sticky; top: 8rem; align-self: start; }.faq-intro h2 { margin: .8rem 0 1rem; }.faq-intro > p:not(.eyebrow) { margin-bottom: 1rem; color: var(--muted); }.faq-list { border-top: 1px solid var(--border); }.faq-list details { border-bottom: 1px solid var(--border); }.faq-list summary { display: grid; grid-template-columns: 2.5rem 1fr auto; min-height: 75px; align-items: center; gap: 1rem; cursor: pointer; font-family: var(--serif); font-size: 1.08rem; font-weight: 800; list-style: none; }.faq-list summary::-webkit-details-marker { display: none; }.faq-list summary span { color: var(--red); font-family: var(--sans); font-size: .7rem; }.faq-list summary i { color: var(--gold); font-family: var(--sans); font-style: normal; transition: transform .2s; }.faq-list details[open] summary i { transform: rotate(45deg); }.faq-list details p { padding: 0 2rem 1.5rem 3.5rem; color: var(--muted); font-size: .9rem; }
   .trust-section { padding-block: clamp(3.5rem, 7vw, 6rem); color: white; background: var(--red); }.trust-wrap { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 4rem; }.trust-section .eyebrow { color: var(--gold-light); }.trust-section h2 { margin-top: .6rem; }.trust-copy > p { color: rgba(255,255,255,.8); }.trust-copy div { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.2rem; }.trust-copy a { font-size: .82rem; font-weight: 800; }
+  .trust-rating { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; padding: .7rem .9rem; border: 1px solid rgba(255,255,255,.3); border-radius: var(--radius-md); background: rgba(255,255,255,.08); font-size: .92rem; }
+  .trust-rating .stars { color: var(--gold-light); font-size: 1.1rem; }.trust-rating strong { color: white; }.trust-rating a { color: var(--gold-light); font-size: .8rem; font-weight: 800; }
   @media (max-width: 980px) { .hero-grid { grid-template-columns: 1fr; }.hero-copy { max-width: 680px; padding-bottom: 0; }.hero-visual { min-height: 500px; }.status-grid { grid-template-columns: 1fr 1fr; }.status-card:nth-child(2) { border-right: 0; }.status-card:nth-child(-n+2) { border-bottom: 1px solid var(--border); }.quick-grid, .food-grid { grid-template-columns: 1fr 1fr; }.first-grid, .map-grid, .events-wrap, .faq-grid { grid-template-columns: 1fr; }.first-copy, .faq-intro { position: static; }.attraction-grid { grid-template-columns: 1fr 1fr; }.map-copy { max-width: 680px; }.food-time:nth-child(2) { border-right: 0; }.food-time:nth-child(-n+2) { border-bottom: 1px solid var(--border); }}
   @media (max-width: 700px) { .hero-marquee { width: calc(100% - 1.5rem); min-height: 0; flex-wrap: wrap; gap: .55rem .75rem; padding: .9rem .75rem; }.hero-marquee a { font-size: .72rem; letter-spacing: .08em; }.hero-marquee i { font-size: .42rem; } }
   @media (max-width: 640px) { .hero { padding-top: 2.2rem; }.hero-grid { gap: 1rem; }.hero h1 { font-size: 3.3rem; }.hero-actions .button { flex: 1 1 45%; }.text-link { width: 100%; }.hero-note { align-items: flex-start; }.hero-visual { min-height: 370px; }.lantern-label { left: .5rem; }.visual-label { right: 0; bottom: 1rem; }.status-head, .food-head, .attraction-head { align-items: flex-start; flex-direction: column; }.source-policy { margin-bottom: 1rem; }.status-grid, .quick-grid, .food-grid, .attraction-grid { grid-template-columns: 1fr; }.status-card { min-height: 250px; border-right: 0; border-bottom: 1px solid var(--border); }.status-card:nth-child(3) { border-bottom: 1px solid var(--border); }.quick-card { min-height: 260px; }.first-grid { gap: 2.5rem; }.route-buttons .button { width: 100%; }.route-flow li { grid-template-columns: 3.5rem 1fr; }.route-flow::before { left: 1.7rem; }.route-flow li > span { width: 3.5rem; height: 3.5rem; }.route-flow li div { padding-left: 1rem; }.food-time { border-right: 0; border-bottom: 1px solid var(--border); }.food-line { margin-bottom: 1.4rem; }.attraction-copy p { min-height: auto; }.trust-wrap { grid-template-columns: 1fr; gap: 2rem; }}

@@ -17,6 +17,7 @@ sourceName: 慢遊雲林－北港鎮形象商圈
 sourceUrl: https://tour.yunlin.gov.tw/mainssl/modules/MySpace/BlogInfo.php?xmlid=1037696
 mapQuery: 北港老街
 order: 2
+googleRating: { value: 4.4, count: 7652 }
 ---
 
 ## 這個景點值得去嗎？
