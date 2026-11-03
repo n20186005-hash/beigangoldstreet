@@ -7,6 +7,31 @@ import Icon from "../components/Icon.astro";
 const { entry } = Astro.props;
 const data = entry.data;
 const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.mapQuery)}`;
+const placePhotos: Record<string, { src: string; alt: string; caption: string; credit: string; source: string; license: string; licenseUrl: string; width: number; height: number }> = {
+  "beigang-old-street": {
+    src: "/images/beigang-old-street.webp",
+    alt: "北港老街中山路沿街商家與行人，遠方可見北港朝天宮",
+    caption: "北港中山路老街實景（2025 年刊載）",
+    credit: "財團法人台灣觀光協會",
+    source: "https://media.taiwan.net.tw/zh-tw/portal/media/collection/48670_ph_20250630",
+    license: "政府資料開放授權條款",
+    licenseUrl: "https://media.taiwan.net.tw/zh-tw/portal/home/license",
+    width: 1600,
+    height: 1067,
+  },
+  "chaotian-temple": {
+    src: "/images/beigang-chaotian-temple.webp",
+    alt: "北港朝天宮正面殿宇與廟埕的實拍照片",
+    caption: "北港朝天宮正面與廟埕實景（2019 年拍攝）",
+    credit: "Guan Zhen Chen／Wikimedia Commons",
+    source: "https://commons.wikimedia.org/wiki/File:雲林北港朝天宮_廟外廣場及街道.jpg",
+    license: "CC BY-SA 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+    width: 1400,
+    height: 788,
+  },
+};
+const placePhoto = placePhotos[entry.id];
 const schema = {
   "@context": "https://schema.org",
   "@type": "TouristAttraction",
@@ -43,7 +68,13 @@ const schema = {
     <div><small>公廁</small><strong>{data.toilet}</strong></div><div><small>無障礙</small><strong>{data.accessibility}</strong></div><div><small>目前狀態</small><StatusBadge status={data.status}/></div>{data.googleRating && <div><small>Google 評分</small><strong>★ {data.googleRating.value}（{data.googleRating.count.toLocaleString()}）</strong></div>}<div><small>資料原則</small><strong>異動以現場公告為準</strong></div>
   </div></section>
   <div class="container content-grid">
-    <article class="place-content prose"><slot /></article>
+    <article class="place-content prose">
+      {placePhoto && <figure class="place-photo">
+        <img src={placePhoto.src} alt={placePhoto.alt} loading="lazy" decoding="async" width={placePhoto.width} height={placePhoto.height} />
+        <figcaption>{placePhoto.caption}｜攝影／製作：<a href={placePhoto.source} target="_blank" rel="noopener noreferrer">{placePhoto.credit}</a> · <a href={placePhoto.licenseUrl} target="_blank" rel="noopener noreferrer">{placePhoto.license}</a>（縮放裁切）</figcaption>
+      </figure>}
+      <slot />
+    </article>
     <aside>
       <div class="aside-card"><h2>地址與導航</h2><p>{data.address}</p><a class="button button--outline" href={mapUrl} target="_blank" rel="noopener">開始導航 ↗</a></div>
       <div class="aside-card"><h2>無障礙提醒</h2><p>{data.accessibilityNote}</p></div>
@@ -59,5 +90,6 @@ const schema = {
   .place-art { position: relative; display: grid; aspect-ratio: 1; border-radius: 50% 50% 8% 50%; overflow: hidden; place-items: center; color: white; background: var(--red); transform: rotate(-6deg); }.place-art::before, .place-art::after { position: absolute; width: 130%; height: 2px; background: rgba(255,255,255,.34); content: ""; transform: rotate(45deg); }.place-art::after { transform: rotate(-45deg); }.place-art span { font-family: var(--serif); font-size: 2rem; font-weight: 800; letter-spacing: .4em; writing-mode: vertical-rl; }.place-art small { position: absolute; right: 2rem; bottom: 1.4rem; color: var(--gold-light); font-size: 1rem; }
   .facts-wrap { border-block: 1px solid var(--border); background: var(--surface); }.facts-grid { display: grid; grid-template-columns: repeat(4, 1fr); }.facts-grid > div { display: grid; min-height: 112px; align-content: center; padding: 1rem; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); gap: .25rem; }.facts-grid > div:nth-child(4n) { border-right: 0; }.facts-grid > div:nth-child(n+5) { border-bottom: 0; }.facts-grid small { color: var(--muted); font-size: .7rem; }.facts-grid strong { font-size: .86rem; line-height: 1.55; }
   .content-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; align-items: start; gap: clamp(3rem, 8vw, 7rem); padding-block: clamp(3rem, 7vw, 6rem); }.place-content { max-width: 760px; }.place-content :global(h2) { margin: 3.4rem 0 1rem; font-size: clamp(1.5rem, 3vw, 2rem); }.place-content :global(h2:first-child) { margin-top: 0; }.place-content :global(p) { color: #514942; }.place-content :global(p + p) { margin-top: 1rem; }aside { position: sticky; top: 7rem; }.aside-card { padding: 1.2rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); box-shadow: var(--shadow-sm); }.aside-card + .aside-card { margin-top: 1rem; }.aside-card h2 { margin-bottom: .7rem; font-family: var(--sans); font-size: .73rem; letter-spacing: .13em; text-transform: uppercase; }.aside-card p { color: var(--muted); font-size: .82rem; }.aside-card .button { width: 100%; margin-top: .8rem; }.source-card a { color: var(--red); font-size: .85rem; font-weight: 800; }.source-card p { margin-top: .7rem; padding-top: .7rem; border-top: 1px dashed var(--border); }
+  .place-photo { margin: 0 0 2rem; }.place-photo img { width: 100%; aspect-ratio: 3 / 2; border-radius: var(--radius-md); object-fit: cover; }.place-photo figcaption { margin-top: .55rem; color: var(--muted); font-size: .73rem; line-height: 1.6; }.place-photo + :global(h2) { margin-top: 2rem; }
   @media(max-width: 800px) { .place-grid { grid-template-columns: 1fr; }.place-art { display: none; }.facts-grid { grid-template-columns: 1fr 1fr; }.facts-grid > div:nth-child(2n) { border-right: 0; }.facts-grid > div:nth-child(n+5) { border-bottom: 1px solid var(--border); }.facts-grid > div:nth-child(n+7) { border-bottom: 0; }.content-grid { grid-template-columns: 1fr; } aside { position: static; } }
 </style>
